@@ -11,6 +11,7 @@ customtkinter.set_default_color_theme("green")
 
 app = customtkinter.CTk()
 app.geometry("600x500")
+app.title("Music")
 pygame.init()
 
 def get_music():
@@ -24,15 +25,18 @@ def play_sound():
     sound_duration = sound_mutagen.info.length
     print(sound_duration)
 
-    sound = pygame.mixer.Sound(music)
-    sound.play()
+    pygame.mixer.music.load(music)
+    pygame.mixer.music.play()
 
     progress.set(0)
     for t in range(101):
         time.sleep(0.01)
         progress.set((t / sound_duration) )
         app.update_idletasks()
-        
+
+def pause_sound():
+    pygame.mixer.music.pause()
+
 music_frame = tkinter.Frame(app, bg="#2e2e2e")
 music_frame.pack(fill="both", expand=True)
 
@@ -43,7 +47,10 @@ for item in os.listdir(os.getcwd()):
     if os.path.splitext(item)[-1] == ".mp3":
         music_list.insert(0, item)
 
-pause_button = customtkinter.CTkButton(app, text="Pause", command=play_sound)
+play_button = customtkinter.CTkButton(app, text="Play", command=play_sound)
+play_button.pack(pady=10)
+
+pause_button = customtkinter.CTkButton(app, text="Pause", command=pause_sound)
 pause_button.pack(pady=10)
 
 progress = customtkinter.CTkProgressBar(app, width=400)
