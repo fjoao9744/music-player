@@ -8,6 +8,7 @@ import time
 
 customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("green")
+pygame.mixer.init()
 
 app = customtkinter.CTk()
 app.geometry("600x500")
@@ -15,27 +16,38 @@ app.title("Music")
 pygame.init()
 
 def get_music():
-    music = music_list.get(music_list.curselection())
-
+    music_pos = music_list.curselection()
+    
+    if not music_pos: return None
+    
+    music = music_list.get(music_pos)
+    
     return music
 
 def play_sound():
     music = get_music()
+    if not music: return # TODO: "selecione uma musica"
+    
+    print(music)
     sound_mutagen = MP3(music)
     sound_duration = sound_mutagen.info.length
-    print(sound_duration)
-
     pygame.mixer.music.load(music)
     pygame.mixer.music.play()
 
     progress.set(0)
-    for t in range(101):
+    for t in steps(sound_duration):
         time.sleep(0.01)
-        progress.set((t / sound_duration) )
+        progress.set(t)
         app.update_idletasks()
 
 def pause_sound():
     pygame.mixer.music.pause()
+    
+def steps(valor_original):
+    total_passos = int(valor_original * 100)  # cada 0.01s é um passo
+    for passo in range(total_passos + 1):
+        novo_valor = (passo / total_passos)  # valor de 0.0 até 1.0
+        yield novo_valor
 
 music_frame = tkinter.Frame(app, bg="#2e2e2e")
 music_frame.pack(fill="both", expand=True)
