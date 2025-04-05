@@ -2,6 +2,7 @@
 import os
 
 # bibliotecas de interface
+from tkinter import messagebox
 import tkinter as tk
 import customtkinter as ctk
 
@@ -50,7 +51,9 @@ class App(ctk.CTk):
     def play_sound(self):
         self.music = self.get_music()
         
-        if not self.music: return # TODO: "selecione uma musica"
+        if not self.music: 
+            messagebox.showinfo("Selecione uma musica", "Por favor, selecione uma musica")
+            return
         
         pygame.mixer.music.load(self.music)
         pygame.mixer.music.play()
