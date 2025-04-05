@@ -18,12 +18,13 @@ class App(ctk.CTk):
         pygame.init()
         self.geometry("600x500")
         self.title("Music")
+        self.configure(fg_color="#1C2D33")
         
         # lista de musicas
-        musics_frame = tk.Frame(self, bg="#2e2e2e")
+        musics_frame = tk.Frame(self, bg="#024059")
         musics_frame.pack(fill="both", expand=True)
         
-        self.musics_list = tk.Listbox(musics_frame, width=60, height=20)
+        self.musics_list = tk.Listbox(musics_frame, width=60, height=13, background="#026873", fg="#04BF8A", justify="center", relief="flat", activestyle="none")
         self.musics_list.pack(expand=True, pady=5)
         
         for file in os.listdir(os.getcwd()):
@@ -32,16 +33,19 @@ class App(ctk.CTk):
                 
         # opções
         
-        play_button = ctk.CTkButton(self, text="Play", command=self.play_sound)
-        play_button.pack(pady=10)
+        play_button = ctk.CTkButton(self, text="Play", command=self.play_sound, fg_color="#025940", corner_radius=20)
+        play_button.pack(pady=(10, 0))
         
-        pause_button = ctk.CTkButton(self, text="Pause", command=self.pause_sound)
+        pause_button = ctk.CTkButton(self, text="Pause", command=self.pause_sound, fg_color="#025940", corner_radius=20)
         pause_button.pack(pady=10)
         
-        self.progress = ctk.CTkProgressBar(self, width=400)
+        self.progress = ctk.CTkProgressBar(self, width=400, fg_color="#025940")
         self.progress.pack(side="bottom", pady=(0, 40))
         
         self.is_pause = False
+        
+        self.slider = ctk.CTkSlider(self, from_=0, to=1, command=self.change_volume, fg_color="#025940")
+        self.slider.pack(pady=10)
         
     def play_sound(self):
         self.music = self.get_music()
@@ -77,7 +81,7 @@ class App(ctk.CTk):
         return sound_duration
 
     def progress_bar(self):
-        if self.is_pause:
+        if self.is_pause or not pygame.mixer.music.get_busy():
            return
         
         try:
@@ -93,7 +97,10 @@ class App(ctk.CTk):
         for step in range(total_steps + 1):
             new_step = step / total_steps # 0.0 até 1.0
             yield new_step
-        
+    
+    def change_volume(self, value):
+        pygame.mixer.music.set_volume(value)
+    
 if __name__ == "__main__":
     app = App()
     app.mainloop()
